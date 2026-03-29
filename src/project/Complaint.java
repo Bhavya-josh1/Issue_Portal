@@ -5,7 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class Complaint implements ActionListener {
+public class Complaint implements ActionListener
+{
 
     JFrame f;
     JTextField titleField, zoneField;
@@ -13,85 +14,106 @@ public class Complaint implements ActionListener {
     JButton submitBtn, viewBtn, logoutBtn;
     String username;
 
-    Complaint(String username) {
+    Complaint(String username)
+    {
         this.username = username;
 
-        f = new JFrame("Issue Reporter - Submit Complaint");
-        UITheme.styleFrame(f, 460, 530);
+        f = new JFrame("Submit Complaint");
+        f.setSize(480, 560);
+        f.setLayout(null);
+        f.setLocationRelativeTo(null);
+        f.setResizable(false);
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Top bar
-        JPanel topBar = new JPanel(null);
-        topBar.setBackground(UITheme.BG_CARD);
-        topBar.setBounds(0, 0, 460, 55);
-        topBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UITheme.BORDER));
+        JPanel bg = new JPanel(null) {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(
+                        0, 0, UITheme.BG_DARK,
+                        getWidth(), getHeight(), new Color(15, 23, 42));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(99, 179, 237, 15));
+                g2.fillOval(-40, 380, 200, 200);
+                g2.dispose();
+            }
+        };
+        bg.setBounds(0, 0, 480, 560);
+        f.setContentPane(bg);
 
-        JLabel appName = new JLabel("Issue Reporter");
-        appName.setBounds(15, 15, 180, 24);
-        appName.setForeground(UITheme.BLUE);
-        appName.setFont(UITheme.FONT_BOLD);
+        JPanel topBar = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g)
+            {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setColor(UITheme.BG_CARD);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(UITheme.BORDER);
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+                g2.dispose();
+            }
+        };
+        topBar.setOpaque(false);
+        topBar.setBounds(0, 0, 480, 55);
 
-        JLabel userLabel = new JLabel("Logged in: " + username);
-        userLabel.setBounds(200, 18, 160, 18);
-        UITheme.styleLabel(userLabel, UITheme.GRAY);
-        userLabel.setFont(UITheme.FONT_SMALL);
+        JLabel appName = UITheme.createLabel("Issue Reporter", UITheme.ACCENT, UITheme.FONT_BOLD);
+        appName.setBounds(18, 17, 180, 22);
 
-        logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(370, 13, 75, 28);
-        UITheme.styleButton(logoutBtn, UITheme.RED);
+        JLabel userLabel = UITheme.createLabel("Logged in: " + username,
+                UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
+        userLabel.setBounds(200, 20, 180, 18);
+
+        logoutBtn = UITheme.createPrimaryButton("Logout", UITheme.DANGER);
+        logoutBtn.setBounds(385, 13, 80, 28);
         logoutBtn.setFont(UITheme.FONT_SMALL);
 
         topBar.add(appName);
         topBar.add(userLabel);
         topBar.add(logoutBtn);
 
-        // Page heading
-        JLabel pageTitle = new JLabel("Submit a Complaint");
-        pageTitle.setBounds(20, 70, 300, 28);
-        pageTitle.setForeground(UITheme.WHITE);
-        pageTitle.setFont(UITheme.FONT_TITLE);
+        JLabel pageTitle = UITheme.createLabel("Submit a Complaint",
+                UITheme.TEXT_PRIMARY, UITheme.FONT_TITLE);
+        pageTitle.setBounds(20, 68, 300, 30);
 
-        // Form card
-        JPanel card = UITheme.createCard(20, 110, 415, 340);
+        JPanel card = UITheme.createCard(20, 110, 438, 370);
 
-        JLabel titleLabel = new JLabel("Issue Title");
-        titleLabel.setBounds(20, 18, 120, 20);
-        UITheme.styleLabel(titleLabel, UITheme.GRAY);
+        JLabel titleLabel = UITheme.createLabel("Issue Title", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
+        titleLabel.setBounds(22, 20, 120, 20);
 
-        titleField = new JTextField();
-        titleField.setBounds(20, 40, 375, 32);
-        UITheme.styleField(titleField);
+        titleField = UITheme.createTextField();
+        titleField.setBounds(22, 43, 394, 38);
 
-        JLabel zoneLabel = new JLabel("Zone / Area");
-        zoneLabel.setBounds(20, 86, 120, 20);
-        UITheme.styleLabel(zoneLabel, UITheme.GRAY);
+        JLabel zoneLabel = UITheme.createLabel("Zone / Area", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
+        zoneLabel.setBounds(22, 95, 120, 20);
 
-        zoneField = new JTextField();
-        zoneField.setBounds(20, 108, 375, 32);
-        UITheme.styleField(zoneField);
+        zoneField = UITheme.createTextField();
+        zoneField.setBounds(22, 118, 394, 38);
 
-        JLabel descLabel = new JLabel("Description");
-        descLabel.setBounds(20, 154, 120, 20);
-        UITheme.styleLabel(descLabel, UITheme.GRAY);
+        JLabel descLabel = UITheme.createLabel("Description", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
+        descLabel.setBounds(22, 170, 120, 20);
 
         descArea = new JTextArea();
         descArea.setBackground(UITheme.BG_INPUT);
-        descArea.setForeground(UITheme.WHITE);
-        descArea.setCaretColor(UITheme.WHITE);
+        descArea.setForeground(UITheme.TEXT_PRIMARY);
+        descArea.setCaretColor(UITheme.ACCENT);
         descArea.setFont(UITheme.FONT_INPUT);
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
+        descArea.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
         JScrollPane descScroll = new JScrollPane(descArea);
-        descScroll.setBounds(20, 176, 375, 100);
+        descScroll.setBounds(22, 193, 394, 100);
         descScroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER, 1));
+        descScroll.getViewport().setBackground(UITheme.BG_INPUT);
 
-        submitBtn = new JButton("Submit Complaint");
-        submitBtn.setBounds(20, 292, 180, 36);
-        UITheme.styleButton(submitBtn, UITheme.BLUE);
+        submitBtn = UITheme.createPrimaryButton("Submit Complaint", UITheme.ACCENT);
+        submitBtn.setBounds(22, 315, 190, 40);
 
-        viewBtn = new JButton("View All Complaints");
-        viewBtn.setBounds(215, 292, 180, 36);
-        UITheme.styleButton(viewBtn, UITheme.GREEN);
+        viewBtn = UITheme.createPrimaryButton("View All Complaints", new Color(71, 85, 105));
+        viewBtn.setBounds(226, 315, 190, 40);
 
         card.add(titleLabel);
         card.add(titleField);
@@ -106,24 +128,26 @@ public class Complaint implements ActionListener {
         viewBtn.addActionListener(this);
         logoutBtn.addActionListener(this);
 
-        f.add(topBar);
-        f.add(pageTitle);
-        f.add(card);
+        bg.add(topBar);
+        bg.add(pageTitle);
+        bg.add(card);
 
         f.setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == submitBtn) {
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == submitBtn)
+        {
             String title = titleField.getText();
             String zone = zoneField.getText();
             String desc = descArea.getText();
 
-            if (title.equals("") || zone.equals("") || desc.equals("")) {
+            if (title.equals("") || zone.equals("") || desc.equals(""))
+            {
                 JOptionPane.showMessageDialog(f, "Please fill in all fields.");
                 return;
             }
-
             try {
                 Connection conn = Database.connect();
                 PreparedStatement ps = conn.prepareStatement(
@@ -133,21 +157,21 @@ public class Complaint implements ActionListener {
                 ps.setString(3, zone);
                 ps.executeUpdate();
                 conn.close();
-
                 JOptionPane.showMessageDialog(f, "Complaint submitted successfully!");
                 titleField.setText("");
                 zoneField.setText("");
                 descArea.setText("");
-            } catch (Exception ex) {
+            } catch (Exception ex)
+            {
                 System.out.println(ex.getMessage());
             }
         }
-
-        if (e.getSource() == viewBtn) {
+        if (e.getSource() == viewBtn)
+        {
             new ViewComplaint();
         }
-
-        if (e.getSource() == logoutBtn) {
+        if (e.getSource() == logoutBtn)
+        {
             f.dispose();
             new Login();
         }

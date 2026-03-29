@@ -3,67 +3,114 @@ package project;
 import javax.swing.*;
 import java.awt.*;
 
-public class UITheme {
+public class UITheme
+{
 
-    // Colors
-    public static final Color BG_DARK   = new Color(20, 25, 45);
-    public static final Color BG_CARD   = new Color(30, 38, 65);
-    public static final Color BG_INPUT  = new Color(45, 55, 85);
-    public static final Color BLUE      = new Color(70, 130, 210);
-    public static final Color GREEN     = new Color(50, 180, 110);
-    public static final Color RED       = new Color(210, 70, 70);
-    public static final Color YELLOW    = new Color(230, 180, 50);
-    public static final Color WHITE     = new Color(225, 230, 245);
-    public static final Color GRAY      = new Color(140, 150, 175);
-    public static final Color BORDER    = new Color(60, 75, 120);
+    public static final Color BG_DARK      = new Color(15, 23, 42);
+    public static final Color BG_CARD      = new Color(30, 41, 59);
+    public static final Color BG_INPUT     = new Color(51, 65, 85);
+    public static final Color ACCENT       = new Color(99, 179, 237);
+    public static final Color SUCCESS      = new Color(74, 222, 128);
+    public static final Color DANGER       = new Color(248, 113, 113);
+    public static final Color TEXT_PRIMARY = new Color(241, 245, 249);
+    public static final Color TEXT_MUTED   = new Color(148, 163, 184);
+    public static final Color BORDER       = new Color(71, 85, 105);
 
-    // Fonts
-    public static final Font FONT_TITLE  = new Font("Segoe UI", Font.BOLD, 20);
-    public static final Font FONT_LABEL  = new Font("Segoe UI", Font.PLAIN, 13);
-    public static final Font FONT_BOLD   = new Font("Segoe UI", Font.BOLD, 13);
-    public static final Font FONT_INPUT  = new Font("Segoe UI", Font.PLAIN, 13);
-    public static final Font FONT_SMALL  = new Font("Segoe UI", Font.PLAIN, 11);
+    public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 22);
+    public static final Font FONT_LABEL = new Font("Segoe UI", Font.PLAIN, 13);
+    public static final Font FONT_BOLD  = new Font("Segoe UI", Font.BOLD, 13);
+    public static final Font FONT_INPUT = new Font("Segoe UI", Font.PLAIN, 14);
+    public static final Font FONT_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
 
-    public static void styleFrame(JFrame f, int w, int h) {
-        f.setSize(w, h);
-        f.setLayout(null);
-        f.setLocationRelativeTo(null);
-        f.setResizable(false);
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.getContentPane().setBackground(BG_DARK);
+    public static JPanel createCard(int x, int y, int w, int h)
+    {
+        JPanel card = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g)
+            {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(BG_CARD);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.setColor(BORDER);
+                g2.setStroke(new BasicStroke(1.5f));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+                g2.dispose();
+            }
+        };
+        card.setOpaque(false);
+        card.setBounds(x, y, w, h);
+        return card;
     }
 
-    public static void styleButton(JButton b, Color bg) {
-        b.setBackground(bg);
-        b.setForeground(Color.WHITE);
-        b.setFont(FONT_BOLD);
-        b.setFocusPainted(false);
-        b.setBorderPainted(false);
-        b.setOpaque(true);
-        b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    public static void styleField(JTextField tf) {
+    public static JTextField createTextField()
+    {
+        JTextField tf = new JTextField();
         tf.setBackground(BG_INPUT);
-        tf.setForeground(WHITE);
-        tf.setCaretColor(WHITE);
+        tf.setForeground(TEXT_PRIMARY);
+        tf.setCaretColor(ACCENT);
         tf.setFont(FONT_INPUT);
         tf.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER, 1),
-                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
+                BorderFactory.createEmptyBorder(6, 12, 6, 12)));
+        return tf;
     }
 
-    public static void styleLabel(JLabel l, Color c) {
-        l.setForeground(c);
-        l.setFont(FONT_LABEL);
+    public static JPasswordField createPasswordField()
+    {
+        JPasswordField pf = new JPasswordField();
+        pf.setBackground(BG_INPUT);
+        pf.setForeground(TEXT_PRIMARY);
+        pf.setCaretColor(ACCENT);
+        pf.setFont(FONT_INPUT);
+        pf.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(BORDER, 1),
+                BorderFactory.createEmptyBorder(6, 12, 6, 12)));
+        return pf;
     }
 
-    // Simple card panel - colored background with border
-    public static JPanel createCard(int x, int y, int w, int h) {
-        JPanel card = new JPanel(null);
-        card.setBackground(BG_CARD);
-        card.setBounds(x, y, w, h);
-        card.setBorder(BorderFactory.createLineBorder(BORDER, 1));
-        return card;
+    public static JButton createPrimaryButton(String text, Color bg)
+    {
+        JButton btn = new JButton(text)
+        {
+            protected void paintComponent(Graphics g)
+            {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                Color base = getModel().isPressed() ? bg.darker()
+                        : getModel().isRollover() ? bg.brighter() : bg;
+                g2.setColor(base);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setForeground(Color.WHITE);
+        btn.setFont(FONT_BOLD);
+        btn.setOpaque(false);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        return btn;
+    }
+
+    public static JLabel createLabel(String text, Color color, Font font)
+    {
+        JLabel lbl = new JLabel(text);
+        lbl.setForeground(color);
+        lbl.setFont(font);
+        return lbl;
+    }
+
+    public static JSeparator createDivider(int x, int y, int w)
+    {
+        JSeparator sep = new JSeparator();
+        sep.setBounds(x, y, w, 1);
+        sep.setForeground(BORDER);
+        sep.setBackground(BORDER);
+        return sep;
     }
 }

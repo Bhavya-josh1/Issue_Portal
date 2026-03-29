@@ -5,92 +5,106 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class Login implements ActionListener {
+public class Login implements ActionListener
+{
 
     JFrame f;
     JTextField userField;
     JPasswordField passField;
     JButton loginBtn, registerBtn;
 
-    Login() {
-        f = new JFrame("Issue Reporter - Login");
-        UITheme.styleFrame(f, 400, 510);
+    Login()
+    {
+        f = new JFrame("Login");
+        f.setSize(420, 600);
+        f.setLayout(null);
+        f.setLocationRelativeTo(null);
+        f.setResizable(false);
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Title at top
-        JLabel appTitle = new JLabel("Issue Reporter", SwingConstants.CENTER);
-        appTitle.setBounds(0, 30, 400, 35);
-        appTitle.setForeground(UITheme.BLUE);
-        appTitle.setFont(UITheme.FONT_TITLE);
+        JPanel bg = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g)
+            {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(
+                        0, 0, UITheme.BG_DARK,
+                        getWidth(), getHeight(), new Color(17, 24, 39));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(99, 179, 237, 25));
+                g2.fillOval(-60, -60, 200, 200);
+                g2.setColor(new Color(56, 189, 248, 15));
+                g2.fillOval(250, 300, 220, 220);
+                g2.dispose();
+            }
+        };
+        bg.setBounds(0, 0, 420, 600);
+        f.setContentPane(bg);
 
-        JLabel appSub = new JLabel("Community Complaint System", SwingConstants.CENTER);
-        appSub.setBounds(0, 65, 400, 20);
-        appSub.setForeground(UITheme.GRAY);
-        appSub.setFont(UITheme.FONT_SMALL);
+        JLabel title = UITheme.createLabel("Issue Reporter", UITheme.TEXT_PRIMARY, UITheme.FONT_TITLE);
+        title.setBounds(110, 40, 220, 35);
 
-        // Card panel
-        JPanel card = UITheme.createCard(40, 105, 320, 290);
+        JLabel subtitle = UITheme.createLabel("Community Complaint System",
+                UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
+        subtitle.setBounds(105, 76, 220, 20);
 
-        JLabel cardTitle = new JLabel("Login to your account");
-        cardTitle.setBounds(20, 18, 280, 22);
-        cardTitle.setForeground(UITheme.WHITE);
-        cardTitle.setFont(UITheme.FONT_BOLD);
+        JPanel card = UITheme.createCard(30, 115, 360, 310);
 
-        JSeparator line = new JSeparator();
-        line.setBounds(20, 44, 280, 2);
-        line.setForeground(UITheme.BORDER);
+        JLabel cardTitle = UITheme.createLabel("Login to your account",
+                UITheme.TEXT_PRIMARY, UITheme.FONT_BOLD);
+        cardTitle.setBounds(25, 22, 300, 22);
 
-        JLabel userLabel = new JLabel("Username");
-        userLabel.setBounds(20, 58, 120, 20);
-        UITheme.styleLabel(userLabel, UITheme.GRAY);
+        card.add(UITheme.createDivider(25, 50, 310));
 
-        userField = new JTextField();
-        userField.setBounds(20, 80, 280, 32);
-        UITheme.styleField(userField);
+        JLabel userLabel = UITheme.createLabel("Username", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
+        userLabel.setBounds(25, 62, 120, 20);
 
-        JLabel passLabel = new JLabel("Password");
-        passLabel.setBounds(20, 126, 120, 20);
-        UITheme.styleLabel(passLabel, UITheme.GRAY);
+        userField = UITheme.createTextField();
+        userField.setBounds(25, 85, 310, 38);
 
-        passField = new JPasswordField();
-        passField.setBounds(20, 148, 280, 32);
-        UITheme.styleField(passField);
+        JLabel passLabel = UITheme.createLabel("Password", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
+        passLabel.setBounds(25, 135, 120, 20);
 
-        loginBtn = new JButton("Login");
-        loginBtn.setBounds(20, 210, 280, 38);
-        UITheme.styleButton(loginBtn, UITheme.BLUE);
+        passField = UITheme.createPasswordField();
+        passField.setBounds(25, 158, 310, 38);
+
+        loginBtn = UITheme.createPrimaryButton("Login", UITheme.ACCENT);
+        loginBtn.setBounds(25, 218, 310, 42);
         loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         card.add(cardTitle);
-        card.add(line);
         card.add(userLabel);
         card.add(userField);
         card.add(passLabel);
         card.add(passField);
         card.add(loginBtn);
 
-        // Register section below card
-        JLabel orLabel = new JLabel("New user?", SwingConstants.CENTER);
-        orLabel.setBounds(0, 430, 400, 20);
-        UITheme.styleLabel(orLabel, UITheme.GRAY);
+        JLabel newUser = UITheme.createLabel("New user?", UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
+        newUser.setBounds(120, 500, 70, 20);
 
-        registerBtn = new JButton("Create an Account");
-        registerBtn.setBounds(110, 455, 180, 34);
-        UITheme.styleButton(registerBtn, UITheme.GREEN);
+        registerBtn = UITheme.createPrimaryButton("Create Account", UITheme.SUCCESS);
+        registerBtn.setBounds(105, 522, 210, 36);
 
         loginBtn.addActionListener(this);
         registerBtn.addActionListener(this);
 
-        f.add(appTitle);
-        f.add(appSub);
-        f.add(card);
-        f.add(orLabel);
-        f.add(registerBtn);
+        bg.add(title);
+        bg.add(subtitle);
+        bg.add(card);
+        bg.add(newUser);
+        bg.add(registerBtn);
 
         f.setVisible(true);
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == loginBtn) {
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == loginBtn)
+        {
             String username = userField.getText();
             String password = new String(passField.getPassword());
 
@@ -98,7 +112,6 @@ public class Login implements ActionListener {
                 JOptionPane.showMessageDialog(f, "Please fill in all fields.");
                 return;
             }
-
             try {
                 Connection conn = Database.connect();
                 PreparedStatement ps = conn.prepareStatement(
@@ -106,26 +119,28 @@ public class Login implements ActionListener {
                 ps.setString(1, username);
                 ps.setString(2, password);
                 ResultSet rs = ps.executeQuery();
-
                 if (rs.next()) {
                     JOptionPane.showMessageDialog(f, "Login successful!");
                     f.dispose();
                     new Complaint(username);
-                } else {
+                } else
+                {
                     JOptionPane.showMessageDialog(f, "Wrong username or password.");
                 }
                 conn.close();
-            } catch (Exception ex) {
+            } catch (Exception ex)
+            {
                 System.out.println(ex.getMessage());
             }
         }
-
-        if (e.getSource() == registerBtn) {
+        if (e.getSource() == registerBtn)
+        {
             new Register();
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         new Login();
     }
 }

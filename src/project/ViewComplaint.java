@@ -6,107 +6,161 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class ViewComplaint implements ActionListener {
+public class ViewComplaint implements ActionListener
+{
 
     JFrame f;
     JButton closeBtn, refreshBtn;
     DefaultTableModel tableModel;
 
-    ViewComplaint() {
-        f = new JFrame("Issue Reporter - View Complaints");
-        UITheme.styleFrame(f, 580, 520);
+    ViewComplaint()
+    {
+        f = new JFrame("View Complaints");
+        f.setSize(600, 520);
+        f.setLayout(null);
+        f.setLocationRelativeTo(null);
+        f.setResizable(false);
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        // Top bar
-        JPanel topBar = new JPanel(null);
-        topBar.setBackground(UITheme.BG_CARD);
-        topBar.setBounds(0, 0, 580, 55);
-        topBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UITheme.BORDER));
+        JPanel bg = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g)
+            {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gp = new GradientPaint(
+                        0, 0, UITheme.BG_DARK,
+                        getWidth(), getHeight(), new Color(15, 23, 42));
+                g2.setPaint(gp);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(248, 113, 113, 15));
+                g2.fillOval(400, -30, 200, 200);
+                g2.dispose();
+            }
+        };
+        bg.setBounds(0, 0, 600, 520);
+        f.setContentPane(bg);
 
-        JLabel appName = new JLabel("Issue Reporter");
-        appName.setBounds(15, 15, 200, 24);
-        appName.setForeground(UITheme.BLUE);
-        appName.setFont(UITheme.FONT_BOLD);
+        JPanel topBar = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setColor(UITheme.BG_CARD);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(UITheme.BORDER);
+                g2.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+                g2.dispose();
+            }
+        };
+        topBar.setOpaque(false);
+        topBar.setBounds(0, 0, 600, 55);
+
+        JLabel appName = UITheme.createLabel("Issue Reporter", UITheme.ACCENT, UITheme.FONT_BOLD);
+        appName.setBounds(18, 17, 180, 22);
         topBar.add(appName);
 
-        // Page heading
-        JLabel pageTitle = new JLabel("All Complaints");
-        pageTitle.setBounds(20, 70, 300, 28);
-        pageTitle.setForeground(UITheme.WHITE);
-        pageTitle.setFont(UITheme.FONT_TITLE);
+        JLabel pageTitle = UITheme.createLabel("All Complaints",
+                UITheme.TEXT_PRIMARY, UITheme.FONT_TITLE);
+        pageTitle.setBounds(20, 68, 300, 30);
 
-        JLabel subLabel = new JLabel("Showing all submitted complaints");
+        JLabel subLabel = UITheme.createLabel("Showing all submitted complaints",
+                UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
         subLabel.setBounds(20, 100, 300, 18);
-        UITheme.styleLabel(subLabel, UITheme.GRAY);
-        subLabel.setFont(UITheme.FONT_SMALL);
 
-        // Table
         String[] columns = {"#", "Title", "Zone", "Description"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            public boolean isCellEditable(int row, int col) {
+        tableModel = new DefaultTableModel(columns, 0)
+        {
+            public boolean isCellEditable(int row, int col)
+            {
                 return false;
             }
         };
 
-        JTable table = new JTable(tableModel);
-        table.setBackground(UITheme.BG_CARD);
-        table.setForeground(UITheme.WHITE);
+        JTable table = new JTable(tableModel)
+        {
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int col)
+            {
+                Component c = super.prepareRenderer(renderer, row, col);
+                if (isRowSelected(row))
+                {
+                    c.setBackground(new Color(99, 179, 237, 80));
+                }
+                else
+                {
+                    c.setBackground(row % 2 == 0 ? UITheme.BG_CARD : new Color(37, 51, 71));
+                }
+                c.setForeground(UITheme.TEXT_PRIMARY);
+                return c;
+            }
+        };
+
         table.setFont(UITheme.FONT_LABEL);
-        table.setRowHeight(32);
-        table.setGridColor(UITheme.BORDER);
-        table.setSelectionBackground(UITheme.BLUE);
-        table.setSelectionForeground(Color.WHITE);
-        table.setShowVerticalLines(false);
+        table.setRowHeight(34);
+        table.setShowGrid(false);
+        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setBackground(UITheme.BG_CARD);
+        table.setForeground(UITheme.TEXT_PRIMARY);
+        table.setSelectionBackground(new Color(99, 179, 237, 80));
+        table.setSelectionForeground(UITheme.TEXT_PRIMARY);
+        table.setFocusable(false);
 
-        // Column widths
-        table.getColumnModel().getColumn(0).setPreferredWidth(30);
-        table.getColumnModel().getColumn(1).setPreferredWidth(150);
-        table.getColumnModel().getColumn(2).setPreferredWidth(110);
-        table.getColumnModel().getColumn(3).setPreferredWidth(230);
-
-        // Header styling
         JTableHeader header = table.getTableHeader();
         header.setBackground(UITheme.BG_INPUT);
-        header.setForeground(UITheme.BLUE);
+        header.setForeground(UITheme.ACCENT);
         header.setFont(UITheme.FONT_BOLD);
-        header.setPreferredSize(new Dimension(0, 36));
+        header.setPreferredSize(new Dimension(0, 38));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UITheme.BORDER));
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(35);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(110);
+        table.getColumnModel().getColumn(3).setPreferredWidth(250);
+
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+        leftRenderer.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 0));
+        for (int i = 0; i < 4; i++)
+        {
+            table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
+        }
 
         JScrollPane scroll = new JScrollPane(table);
-        scroll.setBounds(20, 128, 535, 300);
+        scroll.setBounds(20, 128, 555, 300);
         scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER, 1));
         scroll.getViewport().setBackground(UITheme.BG_CARD);
 
-        refreshBtn = new JButton("Refresh");
-        refreshBtn.setBounds(100, 445, 130, 36);
-        UITheme.styleButton(refreshBtn, UITheme.BLUE);
+        refreshBtn = UITheme.createPrimaryButton("Refresh", UITheme.ACCENT);
+        refreshBtn.setBounds(100, 445, 140, 38);
 
-        closeBtn = new JButton("Close");
-        closeBtn.setBounds(310, 445, 130, 36);
-        UITheme.styleButton(closeBtn, UITheme.RED);
+        closeBtn = UITheme.createPrimaryButton("Close", UITheme.DANGER);
+        closeBtn.setBounds(355, 445, 140, 38);
 
         refreshBtn.addActionListener(this);
         closeBtn.addActionListener(this);
 
-        f.add(topBar);
-        f.add(pageTitle);
-        f.add(subLabel);
-        f.add(scroll);
-        f.add(refreshBtn);
-        f.add(closeBtn);
+        bg.add(topBar);
+        bg.add(pageTitle);
+        bg.add(subLabel);
+        bg.add(scroll);
+        bg.add(refreshBtn);
+        bg.add(closeBtn);
 
         f.setVisible(true);
-
         loadComplaints();
     }
 
-    public void loadComplaints() {
+    public void loadComplaints()
+    {
         tableModel.setRowCount(0);
         try {
             Connection conn = Database.connect();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM complaints");
-
             int count = 1;
-            while (rs.next()) {
+            while (rs.next())
+            {
                 tableModel.addRow(new Object[]{
                         count,
                         rs.getString("title"),
@@ -116,22 +170,26 @@ public class ViewComplaint implements ActionListener {
                 count++;
             }
             conn.close();
-
-            if (count == 1) {
-                // no rows added
+            if (count == 1)
+            {
                 tableModel.addRow(new Object[]{"", "No complaints found", "", ""});
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             System.out.println(e.getMessage());
         }
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == refreshBtn) {
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == refreshBtn)
+        {
             loadComplaints();
         }
-        if (e.getSource() == closeBtn) {
+        if (e.getSource() == closeBtn)
+        {
             f.dispose();
         }
     }
 }
+
