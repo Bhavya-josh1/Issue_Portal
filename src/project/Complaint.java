@@ -19,14 +19,16 @@ public class Complaint implements ActionListener
         this.username = username;
 
         f = new JFrame("Submit Complaint");
-        f.setSize(480, 560);
+        f.setSize(480, 640);
         f.setLayout(null);
         f.setLocationRelativeTo(null);
         f.setResizable(false);
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        JPanel bg = new JPanel(null) {
-            protected void paintComponent(Graphics g) {
+        JPanel bg = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g)
+            {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -41,9 +43,10 @@ public class Complaint implements ActionListener
                 g2.dispose();
             }
         };
-        bg.setBounds(0, 0, 480, 560);
+        bg.setBounds(0, 0, 480, 640);
         f.setContentPane(bg);
 
+        // top navbar
         JPanel topBar = new JPanel(null)
         {
             protected void paintComponent(Graphics g)
@@ -74,11 +77,16 @@ public class Complaint implements ActionListener
         topBar.add(userLabel);
         topBar.add(logoutBtn);
 
+        // stats bar panel
+        JPanel statsPanel = buildStatsPanel();
+        statsPanel.setBounds(20, 65, 438, 70);
+
         JLabel pageTitle = UITheme.createLabel("Submit a Complaint",
                 UITheme.TEXT_PRIMARY, UITheme.FONT_TITLE);
-        pageTitle.setBounds(20, 68, 300, 30);
+        pageTitle.setBounds(20, 145, 300, 30);
 
-        JPanel card = UITheme.createCard(20, 110, 438, 370);
+        // form card
+        JPanel card = UITheme.createCard(20, 185, 438, 390);
 
         JLabel titleLabel = UITheme.createLabel("Issue Title", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
         titleLabel.setBounds(22, 20, 120, 20);
@@ -112,7 +120,7 @@ public class Complaint implements ActionListener
         submitBtn = UITheme.createPrimaryButton("Submit Complaint", UITheme.ACCENT);
         submitBtn.setBounds(22, 315, 190, 40);
 
-        viewBtn = UITheme.createPrimaryButton("View All Complaints", new Color(71, 85, 105));
+        viewBtn = UITheme.createPrimaryButton("View My Complaints", new Color(71, 85, 105));
         viewBtn.setBounds(226, 315, 190, 40);
 
         card.add(titleLabel);
@@ -129,10 +137,59 @@ public class Complaint implements ActionListener
         logoutBtn.addActionListener(this);
 
         bg.add(topBar);
+        bg.add(statsPanel);
         bg.add(pageTitle);
         bg.add(card);
 
         f.setVisible(true);
+    }
+
+    // builds the 4-box stats panel
+    JPanel buildStatsPanel()
+    {
+        JPanel panel = new JPanel(null)
+        {
+            protected void paintComponent(Graphics g)
+            {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(UITheme.BG_CARD);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 14, 14);
+                g2.setColor(UITheme.BORDER);
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 14, 14);
+                g2.dispose();
+            }
+        };
+        panel.setOpaque(false);
+
+        int[] counts = {
+                Database.getCount("Total"),
+                Database.getCount("Pending"),
+                Database.getCount("In Progress"),
+                Database.getCount("Resolved")
+        };
+        String[] labels = {"Total", "Pending", "In Progress", "Resolved"};
+        Color[] colors  = {UITheme.ACCENT, UITheme.WARNING, UITheme.TEXT_PRIMARY, UITheme.SUCCESS};
+
+        int boxW = 438 / 4;
+        for (int i = 0; i < 4; i++)
+        {
+            int bx = i * boxW;
+
+            JLabel num = UITheme.createLabel(String.valueOf(counts[i]), colors[i],
+                    new Font("Segoe UI", Font.BOLD, 22));
+            num.setBounds(bx + 10, 8, boxW - 20, 28);
+            num.setHorizontalAlignment(SwingConstants.CENTER);
+
+            JLabel lbl = UITheme.createLabel(labels[i], UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
+            lbl.setBounds(bx + 10, 36, boxW - 20, 16);
+            lbl.setHorizontalAlignment(SwingConstants.CENTER);
+
+            panel.add(num);
+            panel.add(lbl);
+        }
+        return panel;
     }
 
     public void actionPerformed(ActionEvent e)
@@ -140,8 +197,8 @@ public class Complaint implements ActionListener
         if (e.getSource() == submitBtn)
         {
             String title = titleField.getText();
-            String zone = zoneField.getText();
-            String desc = descArea.getText();
+            String zone  = zoneField.getText();
+            String desc  = descArea.getText();
 
             if (title.equals("") || zone.equals("") || desc.equals(""))
             {
@@ -151,10 +208,12 @@ public class Complaint implements ActionListener
             try {
                 Connection conn = Database.connect();
                 PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO complaints(title, description, zone) VALUES(?,?,?)");
+                        "INSERT INTO complaints(title, description, zone, status, submitted_by)" +
+                                " VALUES(?,?,?,'Pending',?)");
                 ps.setString(1, title);
                 ps.setString(2, desc);
                 ps.setString(3, zone);
+                ps.setString(4, username);
                 ps.executeUpdate();
                 conn.close();
                 JOptionPane.showMessageDialog(f, "Complaint submitted successfully!");
@@ -166,10 +225,12 @@ public class Complaint implements ActionListener
                 System.out.println(ex.getMessage());
             }
         }
+
         if (e.getSource() == viewBtn)
         {
-            new ViewComplaint();
+            new ViewComplaint(username, false);
         }
+
         if (e.getSource() == logoutBtn)
         {
             f.dispose();

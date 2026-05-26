@@ -11,7 +11,7 @@ public class Login implements ActionListener
     JFrame f;
     JTextField userField;
     JPasswordField passField;
-    JButton loginBtn, registerBtn;
+    JButton loginBtn, registerBtn, adminBtn;
 
     Login()
     {
@@ -84,19 +84,26 @@ public class Login implements ActionListener
         card.add(loginBtn);
 
         JLabel newUser = UITheme.createLabel("New user?", UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
-        newUser.setBounds(120, 500, 70, 20);
+        newUser.setBounds(120, 448, 70, 20);
 
         registerBtn = UITheme.createPrimaryButton("Create Account", UITheme.SUCCESS);
-        registerBtn.setBounds(105, 522, 210, 36);
+        registerBtn.setBounds(105, 470, 210, 36);
+
+        // admin login link at the bottom
+        adminBtn = UITheme.createPrimaryButton("Admin Login", new Color(71, 85, 105));
+        adminBtn.setBounds(105, 520, 210, 30);
+        adminBtn.setFont(UITheme.FONT_SMALL);
 
         loginBtn.addActionListener(this);
         registerBtn.addActionListener(this);
+        adminBtn.addActionListener(this);
 
         bg.add(title);
         bg.add(subtitle);
         bg.add(card);
         bg.add(newUser);
         bg.add(registerBtn);
+        bg.add(adminBtn);
 
         f.setVisible(true);
     }
@@ -108,7 +115,8 @@ public class Login implements ActionListener
             String username = userField.getText();
             String password = new String(passField.getPassword());
 
-            if (username.equals("") || password.equals("")) {
+            if (username.equals("") || password.equals(""))
+            {
                 JOptionPane.showMessageDialog(f, "Please fill in all fields.");
                 return;
             }
@@ -117,13 +125,15 @@ public class Login implements ActionListener
                 PreparedStatement ps = conn.prepareStatement(
                         "SELECT * FROM users WHERE username=? AND password=?");
                 ps.setString(1, username);
-                ps.setString(2, password);
+                ps.setString(2, Database.hashPassword(password));
                 ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
+                if (rs.next())
+                {
                     JOptionPane.showMessageDialog(f, "Login successful!");
                     f.dispose();
                     new Complaint(username);
-                } else
+                }
+                else
                 {
                     JOptionPane.showMessageDialog(f, "Wrong username or password.");
                 }
@@ -133,9 +143,16 @@ public class Login implements ActionListener
                 System.out.println(ex.getMessage());
             }
         }
+
         if (e.getSource() == registerBtn)
         {
             new Register();
+        }
+
+        if (e.getSource() == adminBtn)
+        {
+            f.dispose();
+            new AdminLogin();
         }
     }
 

@@ -12,6 +12,7 @@ public class UITheme
     public static final Color ACCENT       = new Color(99, 179, 237);
     public static final Color SUCCESS      = new Color(74, 222, 128);
     public static final Color DANGER       = new Color(248, 113, 113);
+    public static final Color WARNING      = new Color(251, 191, 36);
     public static final Color TEXT_PRIMARY = new Color(241, 245, 249);
     public static final Color TEXT_MUTED   = new Color(148, 163, 184);
     public static final Color BORDER       = new Color(71, 85, 105);
@@ -21,6 +22,7 @@ public class UITheme
     public static final Font FONT_BOLD  = new Font("Segoe UI", Font.BOLD, 13);
     public static final Font FONT_INPUT = new Font("Segoe UI", Font.PLAIN, 14);
     public static final Font FONT_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
+    public static final Font FONT_BADGE = new Font("Segoe UI", Font.BOLD, 11);
 
     public static JPanel createCard(int x, int y, int w, int h)
     {
@@ -112,5 +114,14 @@ public class UITheme
         sep.setForeground(BORDER);
         sep.setBackground(BORDER);
         return sep;
+    }
+
+    // returns the right color for a status string
+    public static Color getStatusColor(String status)
+    {
+        if (status == null) return WARNING;
+        if (status.equals("Resolved"))   return SUCCESS;
+        if (status.equals("In Progress")) return ACCENT;
+        return WARNING; // Pending
     }
 }

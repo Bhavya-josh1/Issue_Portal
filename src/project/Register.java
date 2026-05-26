@@ -125,7 +125,8 @@ public class Register implements ActionListener
                     "SELECT * FROM users WHERE username=?");
             check.setString(1, username);
             ResultSet rs = check.executeQuery();
-            if (rs.next()) {
+            if (rs.next())
+            {
                 JOptionPane.showMessageDialog(f, "Username already taken. Try another.");
                 conn.close();
                 return;
@@ -133,11 +134,12 @@ public class Register implements ActionListener
             PreparedStatement ps = conn.prepareStatement(
                     "INSERT INTO users VALUES(?,?)");
             ps.setString(1, username);
-            ps.setString(2, password);
+            ps.setString(2, Database.hashPassword(password));  // hashed now
             ps.executeUpdate();
             conn.close();
             JOptionPane.showMessageDialog(f, "Account created! You can now login.");
             f.dispose();
+            new Login();
         } catch (Exception ex)
         {
             System.out.println(ex.getMessage());
