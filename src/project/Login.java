@@ -89,7 +89,7 @@ public class Login implements ActionListener
         registerBtn = UITheme.createPrimaryButton("Create Account", UITheme.SUCCESS);
         registerBtn.setBounds(105, 470, 210, 36);
 
-        // admin login link at the bottom
+
         adminBtn = UITheme.createPrimaryButton("Admin Login", new Color(71, 85, 105));
         adminBtn.setBounds(105, 520, 210, 30);
         adminBtn.setFont(UITheme.FONT_SMALL);

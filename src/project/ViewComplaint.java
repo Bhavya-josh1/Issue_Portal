@@ -51,7 +51,7 @@ public class ViewComplaint implements ActionListener
         bg.setBounds(0, 0, 750, 560);
         f.setContentPane(bg);
 
-        // top bar
+
         JPanel topBar = new JPanel(null)
         {
             protected void paintComponent(Graphics g)
@@ -82,7 +82,7 @@ public class ViewComplaint implements ActionListener
         JLabel subLabel = UITheme.createLabel(subText, UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
         subLabel.setBounds(20, 97, 500, 18);
 
-        // search bar
+
         JLabel searchLabel = UITheme.createLabel("Search:", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
         searchLabel.setBounds(20, 125, 60, 26);
 
@@ -105,7 +105,7 @@ public class ViewComplaint implements ActionListener
             }
         });
 
-        // table columns: admin sees Submitted By, user does not
+
         String[] columns;
         if (isAdmin)
         {
@@ -159,7 +159,7 @@ public class ViewComplaint implements ActionListener
         header.setPreferredSize(new Dimension(0, 38));
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, UITheme.BORDER));
 
-        // column widths
+
         if (isAdmin)
         {
             table.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -178,7 +178,7 @@ public class ViewComplaint implements ActionListener
             table.getColumnModel().getColumn(4).setPreferredWidth(90);
         }
 
-        // left-align renderer for all columns except status
+
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
         leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
         leftRenderer.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 0));
@@ -191,7 +191,7 @@ public class ViewComplaint implements ActionListener
             table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
         }
 
-        // color-coded badge renderer for status column
+
         table.getColumnModel().getColumn(statusCol).setCellRenderer(new DefaultTableCellRenderer()
         {
             public Component getTableCellRendererComponent(JTable t, Object value,
@@ -275,7 +275,7 @@ public class ViewComplaint implements ActionListener
             }
             else
             {
-                // user sees only their own
+
                 if (keyword.equals(""))
                 {
                     ps = conn.prepareStatement(

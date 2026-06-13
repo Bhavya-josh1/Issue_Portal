@@ -46,7 +46,6 @@ public class Complaint implements ActionListener
         bg.setBounds(0, 0, 480, 640);
         f.setContentPane(bg);
 
-        // top navbar
         JPanel topBar = new JPanel(null)
         {
             protected void paintComponent(Graphics g)
@@ -77,7 +76,7 @@ public class Complaint implements ActionListener
         topBar.add(userLabel);
         topBar.add(logoutBtn);
 
-        // stats bar panel
+
         JPanel statsPanel = buildStatsPanel();
         statsPanel.setBounds(20, 65, 438, 70);
 
@@ -85,7 +84,7 @@ public class Complaint implements ActionListener
                 UITheme.TEXT_PRIMARY, UITheme.FONT_TITLE);
         pageTitle.setBounds(20, 145, 300, 30);
 
-        // form card
+
         JPanel card = UITheme.createCard(20, 185, 438, 390);
 
         JLabel titleLabel = UITheme.createLabel("Issue Title", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
@@ -144,7 +143,7 @@ public class Complaint implements ActionListener
         f.setVisible(true);
     }
 
-    // builds the 4-box stats panel
+
     JPanel buildStatsPanel()
     {
         JPanel panel = new JPanel(null)

@@ -116,12 +116,12 @@ public class UITheme
         return sep;
     }
 
-    // returns the right color for a status string
+
     public static Color getStatusColor(String status)
     {
         if (status == null) return WARNING;
         if (status.equals("Resolved"))   return SUCCESS;
         if (status.equals("In Progress")) return ACCENT;
-        return WARNING; // Pending
+        return WARNING;
     }
 }

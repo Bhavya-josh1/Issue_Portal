@@ -48,7 +48,7 @@ public class AdminPanel implements ActionListener
         bg.setBounds(0, 0, 800, 640);
         f.setContentPane(bg);
 
-        // top navbar
+
         JPanel topBar = new JPanel(null)
         {
             protected void paintComponent(Graphics g)
@@ -78,7 +78,7 @@ public class AdminPanel implements ActionListener
         topBar.add(adminBadge);
         topBar.add(logoutBtn);
 
-        // stats panel
+
         JPanel statsPanel = buildStatsPanel();
         statsPanel.setBounds(20, 65, 755, 70);
 
@@ -86,7 +86,7 @@ public class AdminPanel implements ActionListener
                 UITheme.TEXT_PRIMARY, UITheme.FONT_TITLE);
         pageTitle.setBounds(20, 148, 350, 30);
 
-        // search bar
+
         JLabel searchLabel = UITheme.createLabel("Search:", UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
         searchLabel.setBounds(20, 188, 60, 26);
 
@@ -109,7 +109,7 @@ public class AdminPanel implements ActionListener
             }
         });
 
-        // table
+
         String[] columns = {"ID", "Title", "Zone", "Description", "Submitted By", "Status"};
         tableModel = new DefaultTableModel(columns, 0)
         {
@@ -161,7 +161,7 @@ public class AdminPanel implements ActionListener
         table.getColumnModel().getColumn(4).setPreferredWidth(100);
         table.getColumnModel().getColumn(5).setPreferredWidth(90);
 
-        // left-align all except status
+
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
         leftRenderer.setHorizontalAlignment(SwingConstants.LEFT);
         leftRenderer.setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 0));
@@ -170,7 +170,7 @@ public class AdminPanel implements ActionListener
             table.getColumnModel().getColumn(i).setCellRenderer(leftRenderer);
         }
 
-        // color badge renderer for status column
+
         table.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer()
         {
             public Component getTableCellRendererComponent(JTable t, Object value,
@@ -198,7 +198,7 @@ public class AdminPanel implements ActionListener
         scroll.setBorder(BorderFactory.createLineBorder(UITheme.BORDER, 1));
         scroll.getViewport().setBackground(UITheme.BG_CARD);
 
-        // update status row at the bottom
+
         JLabel selectLabel = UITheme.createLabel("Select a row, then change status:",
                 UITheme.TEXT_MUTED, UITheme.FONT_LABEL);
         selectLabel.setBounds(20, 537, 250, 22);

@@ -52,7 +52,7 @@ public class AdminLogin implements ActionListener
                 UITheme.TEXT_MUTED, UITheme.FONT_SMALL);
         subtitle.setBounds(90, 76, 260, 20);
 
-        // card with amber border to distinguish from user login
+
         JPanel card = new JPanel(null)
         {
             protected void paintComponent(Graphics g)
